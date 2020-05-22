@@ -9,14 +9,14 @@
     <el-row :gutter="8">
       <el-col :xs="24" :sm="24" :lg="6">
         <div class="chart-wrapper">
-          <speed :chart-data="speed" :vehicle-id="id" />
+          <speed :chart-data="speed" :vehicle-id="id" :date="date" />
         </div>
         <!-- <box-card /> -->
         <Course :total-course="totalCourse" />
       </el-col>
       <el-col :xs="24" :sm="24" :lg="18">
         <div class="chart-wrapper">
-          <pie-chart :chart-data="alarmData" :vehicle-id="id" />
+          <pie-chart :chart-data="alarmData" :vehicle-id="id" :date="date" />
         </div>
       </el-col>
     </el-row>
@@ -57,7 +57,8 @@ export default {
   computed: {},
   watch: {},
   created() {
-    this.id = +this.$route.params.id
+    this.id = this.$route.params.id + ''
+    this.date = this.$route.params.date + ''
   },
   mounted() {
     this.id && this.getChartData()
@@ -78,7 +79,7 @@ export default {
     getChartData() {
       const _this = this
       this.loading = true
-      getAlarmMsg({ id: this.id }).then(response => {
+      getAlarmMsg({ id: this.id, date: this.date }).then(response => {
         const {
           data: { alarm: alarmSum, speed, total_course }
         } = response

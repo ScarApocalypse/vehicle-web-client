@@ -2,6 +2,26 @@
   <div v-loading="loading" class="dashboard-editor-container">
     <!-- <github-corner class="github-corner" /> -->
 
+    <el-collapse v-model="activeNames">
+      <el-collapse-item name="1">
+        <template slot="title">
+          <i class="header-icon el-icon-info" />
+          {{ title }}(面板数据24小时更新一次)
+        </template>
+        <div class="datePickerContainer">
+          <el-date-picker
+            v-model="pos_time"
+            type="month"
+            placeholder="选择日期时间"
+            :editable="false"
+            value-format="yyyy-MM"
+            default-value="2018-02"
+            :clearable="false"
+            @change="handleChange"
+          />
+        </div>
+      </el-collapse-item>
+    </el-collapse>
     <panel-group
       :gpsinfo-num="gpsinfoNum"
       :vehicle-num="vehicleNum"
@@ -119,7 +139,10 @@ export default {
 
       gpsinfoNum: 0,
       vehicleNum: 0,
-      alarmNum: 0
+      alarmNum: 0,
+      activeNames: '',
+      pos_time: '2018-02',
+      title: ''
     }
   },
 
@@ -137,40 +160,48 @@ export default {
   methods: {
     getDashMsg() {
       this.loading = true
-      getDashInfo().then(response => {
-        console.log(response)
-        const {
-          gpsinfoCount,
-          vehicleCount,
-          alarmCount,
-          gpsChartData,
-          alarmChartData,
-          vehicleChartData
-        } = response.data
-        this.gpsinfoNum = +gpsinfoCount
-        this.vehicleNum = +vehicleCount
-        this.alarmNum = +alarmCount
+      getDashInfo(this.pos_time).then(response => {
+        const { dashInfo, chartData } = response.data
+
+        this.title = `${this.pos_time}`
+        if (dashInfo.length > 0) {
+          this.gpsinfoNum = +dashInfo[0].gps_num
+          this.vehicleNum = +dashInfo[0].vehicle_num
+          this.alarmNum = +dashInfo[0].alarm_num
+        } else {
+          this.gpsinfoNum = 0
+          this.vehicleNum = 0
+          this.alarmNum = 0
+        }
+
         for (const key in lineChartData) {
           lineChartData[key].data = []
           lineChartData[key].day = []
         }
-        gpsChartData.forEach(item => {
-          lineChartData.gpsChartData.data.push(item.num)
-          lineChartData.gpsChartData.day.push(item.day)
-        })
-        vehicleChartData.forEach(item => {
-          lineChartData.vehicleChartData.data.push(item.num)
-          lineChartData.vehicleChartData.day.push(item.day)
-        })
-        alarmChartData.forEach(item => {
-          lineChartData.alarmChartData.data.push(item.num)
-          lineChartData.alarmChartData.day.push(item.day)
-        })
+        if (chartData.length > 0) {
+          chartData.forEach(item => {
+            lineChartData.gpsChartData.data.push(item.gps)
+            lineChartData.gpsChartData.day.push(item.day)
+          })
+          chartData.forEach(item => {
+            lineChartData.vehicleChartData.data.push(item.vehicle)
+            lineChartData.vehicleChartData.day.push(item.day)
+          })
+          chartData.forEach(item => {
+            lineChartData.alarmChartData.data.push(item.alarm)
+            lineChartData.alarmChartData.day.push(item.day)
+          })
+        }
+
         this.loading = false
+        this.activeNames = ''
       })
     },
     handleSetLineChartData(type) {
       this.lineChartData = lineChartData[type]
+    },
+    handleChange() {
+      this.getDashMsg()
     }
   }
 }
@@ -194,6 +225,10 @@ export default {
     padding: 16px 16px 0;
     margin-bottom: 32px;
   }
+}
+.datePickerContainer,
+.header-icon {
+  padding-left: 15px !important;
 }
 
 @media (max-width: 1024px) {

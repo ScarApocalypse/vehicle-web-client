@@ -8,11 +8,11 @@ export function listVehicle(params) {
   })
 }
 
-export function getDashInfo(params) {
+export function getDashInfo(date) {
   return request({
     url: '/vehicle/dashinfo',
     method: 'get',
-    params
+    params: { date }
   })
 }
 
@@ -37,5 +37,13 @@ export function addGpsInfo(gpsInfo) {
     url: '/vehicle/addgpsinfo',
     method: 'post',
     data: gpsInfo
+  })
+}
+
+export function deleteGpsInfo({ id, pos_time }) {
+  return request({
+    url: '/vehicle/delete',
+    method: 'delete',
+    params: { id, pos_time }
   })
 }

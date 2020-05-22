@@ -54,56 +54,6 @@ export const constantRoutes = [
 
 export const asyncRoutes = [
   {
-    path: '/book',
-    name: 'book',
-    redirect: '/book/create',
-    component: Layout,
-    meta: {
-      title: '图书管理',
-      icon: 'documentation',
-      roles: ['administrator', 'editor']
-    },
-    hidden: false,
-    children: [
-      {
-        path: '/book/create',
-        name: 'bookCreate',
-        component: () => import('@/views/book/create'),
-        meta: { title: '上传图书', icon: 'edit', roles: ['admin'] }
-      },
-      {
-        path: '/book/edit/:fileName',
-        name: 'bookEdit',
-        component: () => import('@/views/book/edit'),
-        meta: {
-          title: '编辑图书',
-          icon: 'edit',
-          roles: ['administrator'],
-          activeMenu: '/book/list'
-        },
-        hidden: false
-      },
-      {
-        path: '/book/list',
-        name: 'bookList',
-        component: () => import('@/views/book/list'),
-        meta: {
-          title: '图书列表',
-          icon: 'list',
-          roles: ['editor', 'administrator']
-        },
-        children: [
-          {
-            path: '/book/create',
-            name: 'bookCreate',
-            component: () => import('@/views/book/create'),
-            meta: { title: '上传图书', icon: 'edit', roles: ['administrator'] }
-          }
-        ]
-      }
-    ]
-  },
-  {
     path: '/vehicle',
     name: 'vehicle',
     redirect: '/vehicle/list',
@@ -121,7 +71,7 @@ export const asyncRoutes = [
         meta: { title: 'GPS信息', icon: 'list' }
       },
       {
-        path: '/vehicle/data/:id',
+        path: '/vehicle/data/:date/:id',
         name: 'vehicleData',
         component: () => import('@/views/vehicle/data'),
         meta: {

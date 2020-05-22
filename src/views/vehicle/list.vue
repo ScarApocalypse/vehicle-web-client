@@ -175,12 +175,18 @@
             />
           </el-tooltip>
 
-          <!-- <el-button
-            type="text"
-            icon="el-icon-delete"
-            style="color:#f56c6c"
-            @click="handleDelete(row)"
-          /> -->
+          <el-tooltip
+            :content="`删除这条记录`"
+            effect="dark"
+            placement="bottom"
+          >
+            <el-button
+              type="text"
+              icon="el-icon-delete"
+              style="color:#f56c6c"
+              @click="handleDeleteGpsInfo(row)"
+            />
+          </el-tooltip>
         </template>
       </el-table-column>
     </el-table>
@@ -198,15 +204,20 @@
       width="50%"
       @close="handleAddGpsClose"
     >
-      <el-form ref="form" :model="addGpsForm" label-width="80px">
-        <el-form-item label="车辆ID">
+      <el-form
+        ref="addGpsFormRef"
+        :rules="addGpsFormRules"
+        :model="addGpsForm"
+        label-width="80px"
+      >
+        <el-form-item label="车辆ID" prop="vehicle_id">
           <el-input
             v-model="addGpsForm.vehicle_id"
             placeholder="车辆ID"
             clearable
           />
         </el-form-item>
-        <el-form-item label="命令类型">
+        <el-form-item label="命令类型" prop="command_id">
           <el-select
             v-model="addGpsForm.command_id"
             placeholder="请选择命令类型"
@@ -223,7 +234,7 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="详细类型">
+        <el-form-item label="详细类型" prop="alarm_type">
           <el-select
             v-model="addGpsForm.alarm_type"
             placeholder="请选择详细类型"
@@ -239,32 +250,37 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="速度">
+        <el-form-item label="速度" prop="move_speed">
           <el-input v-model="addGpsForm.move_speed" placeholder="请输入内容">
             <template slot="append">
               km/h
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="总里程">
+        <el-form-item label="总里程" prop="total_course">
           <el-input v-model="addGpsForm.total_course" placeholder="请输入内容">
             <template slot="append">
               m
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="gps时间">
+        <el-form-item label="gps时间" prop="pos_time">
           <el-date-picker
             v-model="addGpsForm.pos_time"
             type="datetime"
             placeholder="选择日期时间"
             style="width:100%;"
+            :editable="false"
           />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="showAddGpsInfoDialog = false">取 消</el-button>
-        <el-button type="primary" @click="toAddGpsInfo">
+        <el-button
+          v-loading="dialogLoading"
+          type="primary"
+          @click="toAddGpsInfo"
+        >
           确 定
         </el-button>
       </span>
@@ -276,7 +292,7 @@
 import Pagination from '../../components/Pagination/index'
 import waves from '../../directive/waves/waves'
 import { getCategory, deleteBook } from '../../api/book'
-import { listVehicle, addGpsInfo } from '../../api/vehicle'
+import { listVehicle, addGpsInfo, deleteGpsInfo } from '../../api/vehicle'
 import { parseTime } from '../../utils'
 import alarm from '../../utils/constant'
 export default {
@@ -316,7 +332,26 @@ export default {
         pos_time: '',
         move_speed: '',
         total_course: ''
-      }
+      },
+      addGpsFormRules: {
+        vehicle_id: [
+          { required: true, message: '请输入车辆ID', trigger: 'blur' }
+        ],
+        command_id: [
+          { required: true, message: '请选择命令类型', trigger: 'blur' }
+        ],
+        alarm_type: [
+          { required: true, message: '请选择详细类型', trigger: 'blur' }
+        ],
+        move_speed: [
+          { required: true, message: '请输入移动速度', trigger: 'blur' }
+        ],
+        total_course: [
+          { required: true, message: '请输入路程', trigger: 'blur' }
+        ],
+        pos_time: [{ required: true, message: '请选择时间', trigger: 'blur' }]
+      },
+      dialogLoading: false
     }
   },
   computed: {},
@@ -354,6 +389,7 @@ export default {
   },
   methods: {
     handleAddGpsClose() {
+      this.$refs.addGpsFormRef.resetFields()
       for (const key in this.addGpsForm) {
         this.addGpsForm[key] = ''
       }
@@ -508,7 +544,9 @@ export default {
       })
     },
     watchAlarmMsg(row) {
-      this.$router.push(`/vehicle/data/${row.vehicle_id}`)
+      const arr = row.pos_time.split('-')
+      const date = arr[0] + arr[1]
+      this.$router.push(`/vehicle/data/${date}/${row.vehicle_id}`)
     },
     changeShowAlarm(value) {
       // this.showAlarmOnly = value
@@ -532,10 +570,49 @@ export default {
       this.handleFilter()
     },
     toAddGpsInfo() {
-      console.log(this.addGpsForm)
-      addGpsInfo(this.addGpsForm).then(res => {
-        console.log(res)
+      this.$refs.addGpsFormRef.validate(valid => {
+        if (!valid) return
+        this.dialogLoading = true
+        addGpsInfo(this.addGpsForm).then(res => {
+          console.log(res)
+
+          if (res.code === 0) {
+            this.$message.success('添加GPS信息成功')
+            this.getList()
+            this.showAddGpsInfoDialog = false
+          } else {
+            this.$message.error('添加GPS信息失败')
+          }
+          this.dialogLoading = false
+        })
       })
+    },
+    async handleDeleteGpsInfo(row) {
+      const confirmResult = await this.$confirm(
+        '此操作将永久删除该条GPS信息, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch(err => err)
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('取消删除')
+      }
+      const data = { id: row.id, pos_time: row.pos_time }
+      console.log(data)
+      deleteGpsInfo(data)
+        .then(res => {
+          if (res.code === 0) {
+            this.$message.success('删除成功')
+            this.getList()
+          }
+        })
+        .catch(err => {
+          console.dir(err)
+          this.$message.error('删除失败')
+        })
     }
   }
 }
