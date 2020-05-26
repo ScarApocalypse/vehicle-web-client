@@ -84,11 +84,11 @@ export const asyncRoutes = [
       },
       {
         path: '/vehicle/data',
-        name: 'vehicleData',
-        redirect: '/vehicle/data/0',
+        name: 'vehicleDataSearch',
+        redirect: '/vehicle/data/search/0',
         component: () => import('@/views/vehicle/data'),
         meta: {
-          title: '报警统计',
+          title: '运输工况',
           icon: 'list',
 
           activeMenu: '/vehicle/data'
@@ -117,7 +117,26 @@ export const asyncRoutes = [
         path: '/uservehicle/data',
         name: 'uservehicleList',
         component: () => import('@/views/uservehicle/data'),
-        meta: { title: '报警统计', icon: 'list' }
+        meta: { title: '运输工况', icon: 'list' }
+      }
+    ]
+  },
+  {
+    path: '/account',
+    name: 'account',
+    redirect: '/account/list',
+    component: Layout,
+    meta: {
+      title: ' 账号管理',
+      icon: 'people',
+      roles: ['administrator']
+    },
+    children: [
+      {
+        path: '/account/list',
+        name: 'accountList',
+        component: () => import('@/views/account/list'),
+        meta: { title: '账号管理', icon: 'list' }
       }
     ]
   },

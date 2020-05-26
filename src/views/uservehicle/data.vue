@@ -1,5 +1,28 @@
 <template>
   <div class="dashboard-editor-container">
+    <div class="filter-container">
+      <el-date-picker
+        ref="dataPickerRef"
+        v-model="date"
+        type="month"
+        placeholder="选择月份"
+        class="filter-item"
+        :editable="false"
+        value-format="yyyy-MM"
+        @change="getChartData"
+      />
+      <el-button
+        id="vehiclelistBtn"
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        style="margin-left:10px"
+        @click="getChartData"
+      >
+        查询
+      </el-button>
+    </div>
     <el-row :gutter="8">
       <el-col :xs="24" :sm="24" :lg="6">
         <div class="chart-wrapper">
@@ -44,7 +67,8 @@ export default {
       id: 0,
       alarmData: [],
       speed: 0,
-      totalCourse: 0
+      totalCourse: 0,
+      date: '2018-02'
     }
   },
   computed: {},
@@ -61,21 +85,23 @@ export default {
   },
   methods: {
     getChartData() {
-      getAlarmMsg({ id: +this.id }).then(response => {
-        const {
-          data: { alarm: alarmSum, speed, total_course }
-        } = response
-        const temp = []
-        alarmSum.forEach((item, index) => {
-          const obj = {}
-          obj.value = item.num
-          obj.name = alarm[209][item.alarm_type]
-          temp.push(obj)
-        })
-        this.speed = speed
-        this.alarmData = temp
-        this.totalCourse = total_course
-      })
+      getAlarmMsg({ id: +this.id, date: this.date.split('-').join('') }).then(
+        response => {
+          const {
+            data: { alarm: alarmSum, speed, total_course }
+          } = response
+          const temp = []
+          alarmSum.forEach((item, index) => {
+            const obj = {}
+            obj.value = item.num
+            obj.name = alarm[209][item.alarm_type]
+            temp.push(obj)
+          })
+          this.speed = speed
+          this.alarmData = temp
+          this.totalCourse = total_course
+        }
+      )
     }
   }
 }

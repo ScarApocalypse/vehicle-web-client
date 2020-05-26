@@ -47,3 +47,11 @@ export function deleteGpsInfo({ id, pos_time }) {
     params: { id, pos_time }
   })
 }
+
+export function updateDash(params) {
+  return request({
+    url: '/vehicle/updatedash',
+    method: 'get',
+    params
+  })
+}

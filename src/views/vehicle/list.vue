@@ -102,7 +102,6 @@
       highlight-current-row
       style="width:100%"
       :default-sort="defaultSort"
-      :height="tableHeight"
       @sort-change="sortChange"
     >
       <el-table-column
@@ -472,16 +471,6 @@ export default {
     },
     getList() {
       this.listLoading = true
-      // listBook(this.listQuery).then(response => {
-      //   const { list, count } = response.data
-      //   this.list = list
-      //   this.total = count
-      //   this.listLoading = false
-      //   this.list.forEach(book => {
-      //     book.titleWrapper = this.wrapperKeyword('title', book.title)
-      //     book.authorWrapper = this.wrapperKeyword('author', book.author)
-      //   })
-      // })
       listVehicle(this.listQuery).then(response => {
         const { list, count } = response.data
         this.list = list

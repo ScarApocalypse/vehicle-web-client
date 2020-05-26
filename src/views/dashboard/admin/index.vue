@@ -6,7 +6,9 @@
       <el-collapse-item name="1">
         <template slot="title">
           <i class="header-icon el-icon-info" />
-          {{ title }}(面板数据24小时更新一次)
+          {{
+            title.replace('-0', '年').replace('-', '年') + '月数据'
+          }}(面板数据24小时更新一次)
         </template>
         <div class="datePickerContainer">
           <el-date-picker
@@ -19,6 +21,14 @@
             :clearable="false"
             @change="handleChange"
           />
+          <el-button
+            class="filter-item"
+            type="primary"
+            style="margin-left:10px"
+            @click="handleUpdateDash"
+          >
+            更新数据
+          </el-button>
         </div>
       </el-collapse-item>
     </el-collapse>
@@ -92,7 +102,7 @@ import LineChart from './components/LineChart'
 // import TodoList from './components/TodoList'
 // import BoxCard from './components/BoxCard'
 
-import { getDashInfo } from '../../../api/vehicle'
+import { getDashInfo, updateDash } from '../../../api/vehicle'
 
 var lineChartData = {
   gpsChartData: {
@@ -194,7 +204,6 @@ export default {
         }
 
         this.loading = false
-        this.activeNames = ''
       })
     },
     handleSetLineChartData(type) {
@@ -202,6 +211,14 @@ export default {
     },
     handleChange() {
       this.getDashMsg()
+    },
+    handleUpdateDash() {
+      updateDash({ date: this.pos_time }).then(res => {
+        if (res.code === 0) {
+          this.$message.success('更新面板数据成功')
+          this.getDashMsg()
+        }
+      })
     }
   }
 }

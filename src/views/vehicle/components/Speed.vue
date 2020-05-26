@@ -44,6 +44,11 @@ export default {
         this.initChart()
       })
     },
+    date(newVal, oldVal) {
+      this.$nextTick(() => {
+        this.initChart()
+      })
+    },
     vehicleId() {
       this.$nextTick(() => {
         this.initChart()

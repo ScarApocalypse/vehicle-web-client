@@ -61,7 +61,6 @@
       highlight-current-row
       style="width:100%"
       :default-sort="defaultSort"
-      :height="tableHeight"
       @sort-change="sortChange"
     >
       <!-- <el-table-column
@@ -76,6 +75,7 @@
         prop="pos_time"
         align="center"
         min-width="120"
+        sortable="custom"
       >
         <template slot-scope="{ row: { pos_time } }">
           {{ pos_time.replace('000Z', '').replace('T', ' ') }}
@@ -194,7 +194,7 @@ export default {
     },
     parseQuery() {
       const query = Object.assign({}, this.$route.query)
-      let sort = '+id'
+      let sort = '+pos_time'
       var listQuery = {
         page: 1,
         pageSize: 20,
@@ -210,9 +210,8 @@ export default {
         query.sort && (sort = query.sort)
       }
       const sortSymbol = sort[0]
-      const sortColumn = sort.slice(1, sort.length)
       this.defaultSort = {
-        prop: sortColumn,
+        prop: 'pos_time',
         order: sortSymbol === '+' ? 'ascending' : 'descending'
       }
       if (query.showAlarmOnly === 'true') {
