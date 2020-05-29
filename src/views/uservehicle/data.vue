@@ -9,6 +9,7 @@
         class="filter-item"
         :editable="false"
         value-format="yyyy-MM"
+        :clearable="false"
         @change="getChartData"
       />
       <el-button
@@ -26,14 +27,14 @@
     <el-row :gutter="8">
       <el-col :xs="24" :sm="24" :lg="6">
         <div class="chart-wrapper">
-          <speed :chart-data="speed" />
+          <speed :chart-data="speed" :date="date" />
         </div>
         <!-- <box-card /> -->
         <Course :total-course="totalCourse" />
       </el-col>
       <el-col :xs="24" :sm="24" :lg="18">
         <div class="chart-wrapper">
-          <pie-chart :chart-data="alarmData" />
+          <pie-chart :chart-data="alarmData" :date="date" />
         </div>
       </el-col>
     </el-row>

@@ -27,6 +27,10 @@ export default {
       default: function() {
         return []
       }
+    },
+    date: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -59,7 +63,10 @@ export default {
       this.chart.setOption({
         title: {
           text: `车辆id:${this.$store.getters.username}`,
-          subtext: '2月份报警数据统计',
+          subtext: `${this.date.substring(0, 4)}年${+this.date.substring(
+            5,
+            7
+          )}月报警统计`,
           left: 'center'
         },
         toolbox: {

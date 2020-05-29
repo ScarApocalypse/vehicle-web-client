@@ -12,6 +12,17 @@
       >
         新增
       </el-button>
+      <el-button
+        id="vehiclelistBtn"
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-search"
+        style="margin-left:10px"
+        @click="handleFilter"
+      >
+        查询
+      </el-button>
       <el-input
         v-model="listQuery.vehicle_id"
         placeholder="车辆ID"
@@ -55,6 +66,7 @@
         :editable="false"
         :value-format="switchStatus ? 'yyyy-MM' : 'yyyy-MM-dd'"
         default-value="2018-02"
+        :clearable="false"
         @change="datePickerChange"
       />
 
@@ -470,6 +482,9 @@ export default {
       }
     },
     getList() {
+      if (this.listQuery.alarm_type !== '') {
+        this.listQuery.showAlarmOnly = true
+      }
       this.listLoading = true
       listVehicle(this.listQuery).then(response => {
         const { list, count } = response.data
@@ -492,6 +507,9 @@ export default {
     },
     refresh() {
       console.log(this.listQuery)
+      if (this.listQuery.alarm_type !== '') {
+        this.listQuery.showAlarmOnly = true
+      }
       this.$router.push({
         path: '/vehicle/list',
         query: this.listQuery
@@ -562,18 +580,23 @@ export default {
       this.$refs.addGpsFormRef.validate(valid => {
         if (!valid) return
         this.dialogLoading = true
-        addGpsInfo(this.addGpsForm).then(res => {
-          console.log(res)
+        addGpsInfo(this.addGpsForm)
+          .then(res => {
+            console.log(res)
 
-          if (res.code === 0) {
-            this.$message.success('添加GPS信息成功')
-            this.getList()
-            this.showAddGpsInfoDialog = false
-          } else {
-            this.$message.error('添加GPS信息失败')
-          }
-          this.dialogLoading = false
-        })
+            if (res.code === 0) {
+              this.$message.success('添加GPS信息成功')
+              this.getList()
+              this.showAddGpsInfoDialog = false
+            } else {
+              this.$message.error('添加GPS信息失败')
+            }
+            this.dialogLoading = false
+          })
+          .catch(err => {
+            console.log(err)
+            this.dialogLoading = false
+          })
       })
     },
     async handleDeleteGpsInfo(row) {

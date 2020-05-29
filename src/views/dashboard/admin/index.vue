@@ -213,12 +213,19 @@ export default {
       this.getDashMsg()
     },
     handleUpdateDash() {
-      updateDash({ date: this.pos_time }).then(res => {
-        if (res.code === 0) {
-          this.$message.success('更新面板数据成功')
-          this.getDashMsg()
-        }
-      })
+      this.loading = true
+      updateDash({ date: this.pos_time })
+        .then(res => {
+          if (res.code === 0) {
+            this.$message.success('更新面板数据成功')
+            this.getDashMsg()
+            this.loading = false
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          this.loading = false
+        })
     }
   }
 }

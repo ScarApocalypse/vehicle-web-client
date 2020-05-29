@@ -32,8 +32,9 @@
         placeholder="选择日期"
         class="filter-item"
         :editable="false"
-        value-format="yyyy-MM-dd"
+        :value-format="switchStatus ? 'yyyy-MM' : 'yyyy-MM-dd'"
         default-value="2018-02"
+        :clearable="false"
         @change="handleFilter"
       />
 
@@ -239,6 +240,9 @@ export default {
       }
     },
     getList() {
+      if (this.listQuery.alarm_type !== '') {
+        this.listQuery.showAlarmOnly = true
+      }
       this.listLoading = true
       // listBook(this.listQuery).then(response => {
       //   const { list, count } = response.data
@@ -270,6 +274,9 @@ export default {
       this.handleFilter()
     },
     refresh() {
+      if (this.listQuery.alarm_type !== '') {
+        this.listQuery.showAlarmOnly = true
+      }
       console.log(this.listQuery)
       this.listQuery.vehicle_id = +this.$store.getters.username
       this.$router.push({

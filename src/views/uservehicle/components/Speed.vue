@@ -25,6 +25,10 @@ export default {
     chartData: {
       type: Number,
       default: 0
+    },
+    date: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -57,7 +61,10 @@ export default {
       this.chart.setOption({
         title: {
           text: `车辆id:${this.$store.getters.username}`,
-          subtext: '2月份平均速度',
+          subtext: `${this.date.substring(0, 4)}年${+this.date.substring(
+            5,
+            7
+          )}月报警统计`,
           left: 'center'
         },
         tooltip: {

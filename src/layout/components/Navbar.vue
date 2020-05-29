@@ -11,11 +11,7 @@
 
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
-        <search
-          v-if="roles == 'administrator' && paths !== 'dashboard'"
-          id="header-search"
-          class="right-menu-item"
-        />
+        <search v-show="false" id="header-search" class="right-menu-item" />
 
         <error-log class="errLog-container right-menu-item hover-effect" />
 

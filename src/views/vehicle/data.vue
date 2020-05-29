@@ -21,6 +21,7 @@
         :editable="false"
         value-format="yyyy-MM"
         default-value="2018-02"
+        :clearable="false"
         @change="handleFilter"
       />
       <el-button
@@ -93,6 +94,10 @@ export default {
     this.id = this.$route.params.id + ''
     this.date = this.$route.params.date + ''
     this.listQuery.vehicle_id = this.$route.query.id
+    this.listQuery.date = `${this.date.substring(0, 4)}-${this.date.substring(
+      4,
+      6
+    )}`
   },
   mounted() {
     this.id && this.getChartData()

@@ -11,17 +11,20 @@
         @clear="handleFilter"
         @blur="handleFilter"
       />
-      <el-button
-        id="vehiclelistBtn"
-        v-waves
+      <el-select
+        v-model="listQuery.role"
+        placeholder="角色"
+        clearable
         class="filter-item"
-        type="primary"
-        icon="el-icon-plus"
-        style="margin-left:10px"
-        @click="showAddAccountDialog = true"
+        @change="handleFilter"
       >
-        新增
-      </el-button>
+        <el-option
+          v-for="(item, index) in roles"
+          :key="index"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
       <el-button
         id="vehiclelistBtn"
         v-waves
@@ -32,6 +35,17 @@
         @click="handleFilter"
       >
         查询
+      </el-button>
+      <el-button
+        id="vehiclelistBtn"
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-plus"
+        style="margin-left:10px"
+        @click="showAddAccountDialog = true"
+      >
+        新增
       </el-button>
     </div>
     <el-table
@@ -69,6 +83,7 @@
           <el-button
             type="text"
             icon="el-icon-delete"
+            style="color:#f56c6c"
             @click="toDeleteAccount(row)"
           />
         </template>
@@ -222,7 +237,8 @@ export default {
         page: 1,
         pageSize: 20,
         sort,
-        username: ''
+        username: '',
+        role: ''
       }
       if (query) {
         query.page && (query.page = +query.page)

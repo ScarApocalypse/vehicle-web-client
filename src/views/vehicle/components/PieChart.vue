@@ -66,7 +66,7 @@ export default {
           subtext: `${this.date.substring(0, 4)}年${+this.date.substring(
             4,
             6
-          )}月平均速度`,
+          )}月报警统计`,
           left: 'center'
         },
         toolbox: {

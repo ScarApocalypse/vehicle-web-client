@@ -89,7 +89,7 @@ export const asyncRoutes = [
         component: () => import('@/views/vehicle/data'),
         meta: {
           title: '运输工况',
-          icon: 'list',
+          icon: 'eye-open',
 
           activeMenu: '/vehicle/data'
         }
@@ -117,7 +117,7 @@ export const asyncRoutes = [
         path: '/uservehicle/data',
         name: 'uservehicleList',
         component: () => import('@/views/uservehicle/data'),
-        meta: { title: '运输工况', icon: 'list' }
+        meta: { title: '运输工况', icon: 'eye-open' }
       }
     ]
   },
@@ -136,7 +136,7 @@ export const asyncRoutes = [
         path: '/account/list',
         name: 'accountList',
         component: () => import('@/views/account/list'),
-        meta: { title: '账号管理', icon: 'list' }
+        meta: { title: '账号管理', icon: 'peoples' }
       }
     ]
   },
